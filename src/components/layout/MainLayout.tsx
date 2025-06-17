@@ -28,7 +28,7 @@ const navigation = [
   { name: 'Мессенджер', href: '/messenger', icon: ChatBubbleLeftRightIcon },
   { name: 'Карта', href: '/map', icon: MapIcon },
   { name: 'Уведомления', href: '/notifications', icon: BellIcon },
-  { name: 'Статистика', href: '/statistics', icon: ChartBarIcon },
+  { name: 'Статистика предметов', href: '/statistics', icon: ChartBarIcon },
   { name: 'Успеваемость', href: '/grades', icon: BookOpenIcon },
   { name: 'Помощь', href: '/help', icon: QuestionMarkCircleIcon },
   { name: 'Финансы', href: '/finance', icon: BanknotesIcon },
