@@ -8,14 +8,14 @@ export const LoginForm: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setError('');
       setLoading(true);
-      await signIn(email, password);
+      await login(email, password);
       navigate('/dashboard');
     } catch (err) {
       setError('Failed to sign in. Please check your credentials.');
