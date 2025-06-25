@@ -398,14 +398,14 @@ const Schools: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white shadow-2xl rounded-3xl overflow-hidden border">
           {/* Hero Section */}
-          <div className="text-center p-6 sm:p-8 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-            <div className="inline-block p-2 px-4 rounded-full bg-gradient-to-r from-red-50 to-blue-50 mb-4">
+          <div className="text-center p-4 sm:p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div className="inline-block p-2 px-4 rounded-full bg-gradient-to-r from-red-50 to-blue-50 mb-2">
               <span className="text-sm font-medium text-red-600">AlmaU Schools</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-blue-600">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-blue-600">
               Школы AlmaU
             </h1>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto">
               Выберите школу, которая соответствует вашим интересам и карьерным целям
             </p>
           </div>

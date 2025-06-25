@@ -30,6 +30,7 @@ import {
   ChatBubbleLeftRightIcon,
   UserCircleIcon as UserCircleSolidIcon,
 } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 
 interface Message {
   id: string;
@@ -752,165 +753,8 @@ const Messenger: React.FC = () => {
             </>
           )}
           {activeTab === 'contacts' && (
-            <div className="p-4">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Преподаватели</h2>
-              <div className="space-y-4">
-                {Object.values(teachers).map((teacher) => (
-                  <button
-                    key={teacher.id}
-                    onClick={() => {
-                      const chat = privateChats.find(c => c.name === teacher.name);
-                      if (chat) {
-                        handleChatSelect(chat);
-                      } else {
-                        setSelectedTeacher(teacher);
-                      }
-                    }}
-                    className="w-full flex items-center p-3 rounded-xl hover:bg-gray-50"
-                  >
-                    <img
-                      src={teacher.avatar}
-                      alt={teacher.name}
-                      className="h-12 w-12 rounded-full"
-                    />
-                    <div className="ml-3 text-left">
-                      <p className="text-sm font-medium text-gray-900">{teacher.name}</p>
-                      <p className="text-xs text-gray-500">{teacher.school}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-4">Личные чаты</h2>
-              <div className="space-y-4">
-                {privateChats.map((chat) => {
-                  const teacher = teachers[chat.name];
-                  return (
-                    <button
-                      key={chat.id}
-                      onClick={() => handleChatSelect(chat)}
-                      className="w-full flex items-center p-3 rounded-xl hover:bg-gray-50"
-                    >
-                      <div className="relative">
-                        {teacher?.avatar ? (
-                          <img
-                            src={teacher.avatar}
-                            alt={teacher.name}
-                            className="h-12 w-12 rounded-full"
-                          />
-                        ) : (
-                          <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                            <UserIcon className="h-6 w-6 text-gray-500" />
-                          </div>
-                        )}
-                        {chat.isOnline && (
-                          <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white" />
-                        )}
-                      </div>
-                      <div className="ml-3 text-left flex-1">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-gray-900">{chat.name}</p>
-                          {chat.lastMessage && (
-                            <span className="text-xs text-gray-500">{chat.lastMessage.timestamp}</span>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-500 truncate">
-                          {chat.lastMessage?.content}
-                        </p>
-                      </div>
-                      {chat.unreadCount > 0 && (
-                        <span className="ml-2 inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-500 text-xs font-medium text-white">
-                          {chat.unreadCount}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {activeTab === 'profile' && (
-            <div className="p-4">
-              <div className="flex items-center space-x-4">
-                <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
-                  <UserCircleSolidIcon className="h-10 w-10 text-gray-500" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Ваше имя</h2>
-                  <p className="text-sm text-gray-500">Студент</p>
-                </div>
-              </div>
-              <div className="mt-6 space-y-4">
-                <button className="w-full p-3 text-left rounded-xl hover:bg-gray-50">
-                  <p className="text-sm font-medium text-gray-900">Настройки</p>
-                </button>
-                <button className="w-full p-3 text-left rounded-xl hover:bg-gray-50">
-                  <p className="text-sm font-medium text-gray-900">Уведомления</p>
-                </button>
-                <button className="w-full p-3 text-left rounded-xl hover:bg-gray-50">
-                  <p className="text-sm font-medium text-gray-900">Помощь</p>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="h-screen flex bg-gray-50">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:flex-col lg:w-80 border-r border-gray-200 bg-white">
-        <div className="p-4 border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-900">Мессенджер</h1>
-        </div>
-
-        <div className="p-4 border-b border-gray-200">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Поиск чатов..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <MagnifyingGlassIcon className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-4">
-            <div className="flex space-x-4 mb-4">
-              <button
-                onClick={() => setActiveTab('chats')}
-                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium ${
-                  activeTab === 'chats'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Чаты
-              </button>
-              <button
-                onClick={() => setActiveTab('contacts')}
-                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium ${
-                  activeTab === 'contacts'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Контакты
-              </button>
-            </div>
-
-            {activeTab === 'chats' && (
-              <>
-                {renderChatList(groupChats, 'Группы', 'groups')}
-              </>
-            )}
-            {activeTab === 'contacts' && (
-              <>
+            <div className="flex flex-col md:flex-row gap-8 h-full">
+              <div className="flex-1 flex flex-col">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Преподаватели</h2>
                 <div className="space-y-4">
                   {Object.values(teachers).map((teacher) => (
@@ -938,8 +782,9 @@ const Messenger: React.FC = () => {
                     </button>
                   ))}
                 </div>
-
-                <h2 className="text-lg font-semibold text-gray-900 mt-8 mb-4">Личные чаты</h2>
+              </div>
+              <div className="flex-1 flex flex-col">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Личные чаты</h2>
                 <div className="space-y-4">
                   {privateChats.map((chat) => {
                     const teacher = teachers[chat.name];
@@ -985,193 +830,357 @@ const Messenger: React.FC = () => {
                     );
                   })}
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+            </div>
+          )}
+          {activeTab === 'profile' && (
+            <div className="p-4">
+              <div className="flex items-center space-x-4">
+                <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+                  <UserCircleSolidIcon className="h-10 w-10 text-gray-500" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">Ваше имя</h2>
+                  <p className="text-sm text-gray-500">Студент</p>
+                </div>
+              </div>
+              <div className="mt-6 space-y-4">
+                <button className="w-full p-3 text-left rounded-xl hover:bg-gray-50">
+                  <p className="text-sm font-medium text-gray-900">Настройки</p>
+                </button>
+                <button className="w-full p-3 text-left rounded-xl hover:bg-gray-50">
+                  <p className="text-sm font-medium text-gray-900">Уведомления</p>
+                </button>
+                <button className="w-full p-3 text-left rounded-xl hover:bg-gray-50">
+                  <p className="text-sm font-medium text-gray-900">Помощь</p>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+    </div>
+  );
 
-      {/* Mobile Menu */}
-      {renderMobileMenu()}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+      <motion.div className="w-full h-full bg-white shadow-2xl rounded-3xl overflow-hidden border">
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:flex lg:flex-col lg:w-80 border-r border-gray-200 bg-white">
+          <div className="p-4 border-b border-gray-200">
+            <h1 className="text-xl font-semibold text-gray-900">Мессенджер</h1>
+          </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {selectedChat ? (
-          <>
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white">
-              <div className="flex items-center">
-                <div className="relative">
-                  {selectedChat.avatar ? (
-                    <img
-                      src={selectedChat.avatar}
-                      alt={selectedChat.name}
-                      className="h-10 w-10 rounded-full"
-                    />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                      {selectedChat.type === 'group' ? (
-                        <UserGroupIcon className="h-6 w-6 text-gray-500" />
-                      ) : (
-                        <UserIcon className="h-6 w-6 text-gray-500" />
-                      )}
-                    </div>
-                  )}
-                  {selectedChat.isOnline && (
-                    <span className="absolute bottom-0 right-0 h-2 w-2 bg-green-500 rounded-full border-2 border-white" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <div className="flex items-center space-x-2">
-                    <h2 className="text-lg font-medium text-gray-900">{selectedChat.name}</h2>
-                    {teachers[selectedChat.name] && (
-                      <button
-                        onClick={() => {
-                          setSelectedTeacher(teachers[selectedChat.name]);
-                          setIsMobileProfileOpen(true);
-                        }}
-                        className="p-1 rounded-full hover:bg-gray-100"
-                      >
-                        <AcademicCapIcon className="h-5 w-5 text-gray-500" />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    {selectedChat.type === 'group'
-                      ? `${selectedChat.participants.length} участников`
-                      : selectedChat.isOnline
-                      ? 'В сети'
-                      : 'Не в сети'}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button className="p-2 rounded-full hover:bg-gray-100">
-                  <PhoneIcon className="h-6 w-6 text-gray-500" />
-                </button>
-                <button className="p-2 rounded-full hover:bg-gray-100">
-                  <VideoCameraIcon className="h-6 w-6 text-gray-500" />
-                </button>
-                {selectedChat.type === 'group' && (
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowParticipants(!showParticipants)}
-                      className="p-2 rounded-full hover:bg-gray-100"
-                    >
-                      <EllipsisHorizontalIcon className="h-6 w-6 text-gray-500" />
-                    </button>
-                    {showParticipants && renderParticipantsDropdown()}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 pb-36">
-              {messages[selectedChat.id]?.map(renderMessage)}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {attachments.length > 0 && (
-              <div className="fixed bottom-28 left-0 right-0 lg:left-80 px-4 py-2 border-t border-gray-200 bg-white">
-                <div className="flex items-center space-x-2 overflow-x-auto max-w-full mx-auto">
-                  {attachments.map((file, index) => (
-                    <div
-                      key={index}
-                      className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden"
-                    >
-                      {file.type.startsWith('image/') ? (
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={file.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                          <PaperClipIcon className="h-8 w-8 text-gray-400" />
-                        </div>
-                      )}
-                      <button
-                        onClick={() => removeAttachment(index)}
-                        className="absolute top-1 right-1 p-1 rounded-full bg-gray-900/50 text-white hover:bg-gray-900/75"
-                      >
-                        <XMarkIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="fixed bottom-0 left-0 right-0 lg:left-80 border-t border-gray-200 bg-white lg:pb-4 pb-20">
-              <div className="flex items-center space-x-2 p-4 max-w-full mx-auto">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="p-2 rounded-full hover:bg-gray-100"
-                >
-                  <PaperClipIcon className="h-6 w-6 text-gray-500" />
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  multiple
-                  className="hidden"
-                />
-                <button
-                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                  className="p-2 rounded-full hover:bg-gray-100"
-                >
-                  <FaceSmileIcon className="h-6 w-6 text-gray-500" />
-                </button>
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="Введите сообщение..."
-                  className="flex-1 border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <button
-                  onClick={() => setIsRecording(!isRecording)}
-                  className={`p-2 rounded-full ${
-                    isRecording ? 'bg-red-500 text-white' : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <MicrophoneIcon className="h-6 w-6" />
-                </button>
-                <button
-                  onClick={handleSendMessage}
-                  className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  <PaperAirplaneIcon className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
-            <div className="text-center">
-              <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">Выберите чат</h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Начните общение, выбрав чат из списка
-              </p>
+          <div className="p-4 border-b border-gray-200">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Поиск чатов..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <MagnifyingGlassIcon className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
             </div>
           </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-4">
+              <div className="flex space-x-4 mb-4">
+                <button
+                  onClick={() => setActiveTab('chats')}
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium ${
+                    activeTab === 'chats'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Чаты
+                </button>
+                <button
+                  onClick={() => setActiveTab('contacts')}
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium ${
+                    activeTab === 'contacts'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Контакты
+                </button>
+              </div>
+
+              {activeTab === 'chats' && (
+                <>
+                  {renderChatList(groupChats, 'Группы', 'groups')}
+                </>
+              )}
+              {activeTab === 'contacts' && (
+                <div className="flex flex-col md:flex-row gap-8 h-full">
+                  <div className="flex-1 flex flex-col">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Преподаватели</h2>
+                    <div className="space-y-4">
+                      {Object.values(teachers).map((teacher) => (
+                        <button
+                          key={teacher.id}
+                          onClick={() => {
+                            const chat = privateChats.find(c => c.name === teacher.name);
+                            if (chat) {
+                              handleChatSelect(chat);
+                            } else {
+                              setSelectedTeacher(teacher);
+                            }
+                          }}
+                          className="w-full flex items-center p-3 rounded-xl hover:bg-gray-50"
+                        >
+                          <img
+                            src={teacher.avatar}
+                            alt={teacher.name}
+                            className="h-12 w-12 rounded-full"
+                          />
+                          <div className="ml-3 text-left">
+                            <p className="text-sm font-medium text-gray-900">{teacher.name}</p>
+                            <p className="text-xs text-gray-500">{teacher.school}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex-1 flex flex-col">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Личные чаты</h2>
+                    <div className="space-y-4">
+                      {privateChats.map((chat) => {
+                        const teacher = teachers[chat.name];
+                        return (
+                          <button
+                            key={chat.id}
+                            onClick={() => handleChatSelect(chat)}
+                            className="w-full flex items-center p-3 rounded-xl hover:bg-gray-50"
+                          >
+                            <div className="relative">
+                              {teacher?.avatar ? (
+                                <img
+                                  src={teacher.avatar}
+                                  alt={teacher.name}
+                                  className="h-12 w-12 rounded-full"
+                                />
+                              ) : (
+                                <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
+                                  <UserIcon className="h-6 w-6 text-gray-500" />
+                                </div>
+                              )}
+                              {chat.isOnline && (
+                                <span className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white" />
+                              )}
+                            </div>
+                            <div className="ml-3 text-left flex-1">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-medium text-gray-900">{chat.name}</p>
+                                {chat.lastMessage && (
+                                  <span className="text-xs text-gray-500">{chat.lastMessage.timestamp}</span>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-500 truncate">
+                                {chat.lastMessage?.content}
+                              </p>
+                            </div>
+                            {chat.unreadCount > 0 && (
+                              <span className="ml-2 inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-500 text-xs font-medium text-white">
+                                {chat.unreadCount}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {renderMobileMenu()}
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col">
+          {selectedChat ? (
+            <>
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-white">
+                <div className="flex items-center">
+                  <div className="relative">
+                    {selectedChat.avatar ? (
+                      <img
+                        src={selectedChat.avatar}
+                        alt={selectedChat.name}
+                        className="h-10 w-10 rounded-full"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        {selectedChat.type === 'group' ? (
+                          <UserGroupIcon className="h-6 w-6 text-gray-500" />
+                        ) : (
+                          <UserIcon className="h-6 w-6 text-gray-500" />
+                        )}
+                      </div>
+                    )}
+                    {selectedChat.isOnline && (
+                      <span className="absolute bottom-0 right-0 h-2 w-2 bg-green-500 rounded-full border-2 border-white" />
+                    )}
+                  </div>
+                  <div className="ml-3">
+                    <div className="flex items-center space-x-2">
+                      <h2 className="text-lg font-medium text-gray-900">{selectedChat.name}</h2>
+                      {teachers[selectedChat.name] && (
+                        <button
+                          onClick={() => {
+                            setSelectedTeacher(teachers[selectedChat.name]);
+                            setIsMobileProfileOpen(true);
+                          }}
+                          className="p-1 rounded-full hover:bg-gray-100"
+                        >
+                          <AcademicCapIcon className="h-5 w-5 text-gray-500" />
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      {selectedChat.type === 'group'
+                        ? `${selectedChat.participants.length} участников`
+                        : selectedChat.isOnline
+                        ? 'В сети'
+                        : 'Не в сети'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button className="p-2 rounded-full hover:bg-gray-100">
+                    <PhoneIcon className="h-6 w-6 text-gray-500" />
+                  </button>
+                  <button className="p-2 rounded-full hover:bg-gray-100">
+                    <VideoCameraIcon className="h-6 w-6 text-gray-500" />
+                  </button>
+                  {selectedChat.type === 'group' && (
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowParticipants(!showParticipants)}
+                        className="p-2 rounded-full hover:bg-gray-100"
+                      >
+                        <EllipsisHorizontalIcon className="h-6 w-6 text-gray-500" />
+                      </button>
+                      {showParticipants && renderParticipantsDropdown()}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 bg-gray-50 pb-36">
+                {messages[selectedChat.id]?.map(renderMessage)}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
+                    <PaperClipIcon className="h-6 w-6 text-gray-500" />
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    multiple
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                  >
+                    <FaceSmileIcon className="h-6 w-6 text-gray-500" />
+                  </button>
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    placeholder="Введите сообщение..."
+                    className="flex-1 border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    onClick={() => setIsRecording(!isRecording)}
+                    className={`p-2 rounded-full ${
+                      isRecording ? 'bg-red-500 text-white' : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <MicrophoneIcon className="h-6 w-6" />
+                  </button>
+                  <button
+                    onClick={handleSendMessage}
+                    className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  >
+                    <PaperAirplaneIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+
+              {attachments.length > 0 && (
+                <div className="fixed bottom-28 left-0 right-0 lg:left-80 px-4 py-2 border-t border-gray-200 bg-white">
+                  <div className="flex items-center space-x-2 overflow-x-auto max-w-full mx-auto">
+                    {attachments.map((file, index) => (
+                      <div
+                        key={index}
+                        className="relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden"
+                      >
+                        {file.type.startsWith('image/') ? (
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                            <PaperClipIcon className="h-8 w-8 text-gray-400" />
+                          </div>
+                        )}
+                        <button
+                          onClick={() => removeAttachment(index)}
+                          className="absolute top-1 right-1 p-1 rounded-full bg-gray-900/50 text-white hover:bg-gray-900/75"
+                        >
+                          <XMarkIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-sm font-medium text-gray-900">Выберите чат</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Начните общение, выбрав чат из списка
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Navigation */}
+        {renderBottomNavigation()}
+
+        {/* Overlay for mobile menu */}
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
         )}
-      </div>
 
-      {/* Bottom Navigation */}
-      {renderBottomNavigation()}
-
-      {/* Overlay for mobile menu */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-
-      {selectedTeacher && renderTeacherProfile(selectedTeacher)}
+        {selectedTeacher && renderTeacherProfile(selectedTeacher)}
+      </motion.div>
     </div>
   );
 };

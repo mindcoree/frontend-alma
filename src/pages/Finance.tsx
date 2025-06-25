@@ -180,6 +180,7 @@ const Finance: React.FC = () => {
   const [calculatorAmount, setCalculatorAmount] = useState('');
   const [calculatorMonths, setCalculatorMonths] = useState('1');
   const [calculatorType, setCalculatorType] = useState('tuition');
+  const [selectedHistoryType, setSelectedHistoryType] = useState<'all' | 'tuition' | 'dormitory'>('all');
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ru-KZ', {
@@ -340,6 +341,20 @@ const Finance: React.FC = () => {
     },
   };
 
+  // Фильтрация данных для графика Bar
+  const getFilteredHistory = () => {
+    if (selectedHistoryType === 'all') return financialSummary.paymentHistory;
+    if (selectedHistoryType === 'tuition') {
+      // Предполагаем, что платежи за обучение — это те, где amount >= 1_000_000
+      return financialSummary.paymentHistory.map((p) => ({ ...p, amount: p.amount >= 1000000 ? p.amount : 0 }));
+    }
+    if (selectedHistoryType === 'dormitory') {
+      // Платежи за общежитие — amount < 1_000_000 и > 0
+      return financialSummary.paymentHistory.map((p) => ({ ...p, amount: p.amount > 0 && p.amount < 1000000 ? p.amount : 0 }));
+    }
+    return financialSummary.paymentHistory;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -395,13 +410,22 @@ const Finance: React.FC = () => {
                 <p className="text-sm text-gray-500 mt-1">Статистика платежей за последние 6 месяцев</p>
               </div>
               <div className="flex items-center space-x-2">
-                <button className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200">
+                <button
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors duration-200 font-medium ${selectedHistoryType === 'all' ? 'bg-blue-50 text-blue-600 shadow' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
+                  onClick={() => setSelectedHistoryType('all')}
+                >
                   Все
                 </button>
-                <button className="px-3 py-1.5 text-sm bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                <button
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors duration-200 font-medium ${selectedHistoryType === 'tuition' ? 'bg-blue-50 text-blue-600 shadow' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
+                  onClick={() => setSelectedHistoryType('tuition')}
+                >
                   Обучение
                 </button>
-                <button className="px-3 py-1.5 text-sm bg-gray-50 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                <button
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors duration-200 font-medium ${selectedHistoryType === 'dormitory' ? 'bg-blue-50 text-blue-600 shadow' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
+                  onClick={() => setSelectedHistoryType('dormitory')}
+                >
                   Общежитие
                 </button>
               </div>
@@ -410,11 +434,11 @@ const Finance: React.FC = () => {
               <div className="h-64 bg-gray-50 rounded-xl p-4">
                 <Bar 
                   data={{
-                    labels: financialSummary.paymentHistory.map(p => p.month),
+                    labels: getFilteredHistory().map(p => p.month),
                     datasets: [
                       {
                         label: 'Сумма платежей',
-                        data: financialSummary.paymentHistory.map(p => p.amount),
+                        data: getFilteredHistory().map(p => p.amount),
                         backgroundColor: 'rgba(59, 130, 246, 0.8)',
                         borderRadius: 4,
                       }
