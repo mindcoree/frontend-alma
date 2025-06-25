@@ -26,6 +26,7 @@ import {
   PaintBrushIcon,
   RocketLaunchIcon,
 } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 
 interface Program {
   name: string;
@@ -393,165 +394,169 @@ const Schools: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <div className="inline-block p-2 px-4 rounded-full bg-gradient-to-r from-red-50 to-blue-50 mb-4">
-            <span className="text-sm font-medium text-red-600">AlmaU Schools</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-blue-600">
-            Школы AlmaU
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            Выберите школу, которая соответствует вашим интересам и карьерным целям
-          </p>
-        </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Всего школ</p>
-                <p className="text-2xl font-bold text-gray-900">{schools.length}</p>
-              </div>
-              <BuildingLibraryIcon className="h-8 w-8 text-red-600" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white shadow-2xl rounded-3xl overflow-hidden border">
+          {/* Hero Section */}
+          <div className="text-center p-6 sm:p-8 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <div className="inline-block p-2 px-4 rounded-full bg-gradient-to-r from-red-50 to-blue-50 mb-4">
+              <span className="text-sm font-medium text-red-600">AlmaU Schools</span>
             </div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-blue-600">
+              Школы AlmaU
+            </h1>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+              Выберите школу, которая соответствует вашим интересам и карьерным целям
+            </p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Программ обучения</p>
-                <p className="text-2xl font-bold text-gray-900">50+</p>
-              </div>
-              <BookOpenIcon className="h-8 w-8 text-blue-600" />
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Преподавателей</p>
-                <p className="text-2xl font-bold text-gray-900">200+</p>
-              </div>
-              <UserGroupIcon className="h-8 w-8 text-purple-600" />
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">Выпускников</p>
-                <p className="text-2xl font-bold text-gray-900">10k+</p>
-              </div>
-              <TrophyIcon className="h-8 w-8 text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        {/* Search and Filter Section */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
-                placeholder="Поиск школ..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
-              {categories.map((category) => {
-                const Icon = category.icon;
-                return (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                      selectedCategory === category.id
-                        ? 'bg-gradient-to-r from-red-600 to-blue-600 text-white shadow-md'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {category.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Schools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSchools.map((school) => (
-            <div
-              key={school.id}
-              className="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-red-100 transform hover:-translate-y-1"
-              onClick={() => {
-                setSelectedSchool(school);
-                setIsModalOpen(true);
-              }}
-            >
-              <div className="p-6">
-                <div className="flex items-center mb-4">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br from-${school.color.split('-')[1]}-500 to-${school.color.split('-')[1]}-600 text-white mr-4`}>
-                    <school.icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200">
-                    {school.name}
-                  </h3>
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500">Всего школ</p>
+                  <p className="text-2xl font-bold text-gray-900">{schools.length}</p>
                 </div>
-                <p className="text-sm md:text-base text-gray-600 mb-4 line-clamp-2">{school.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {school.programs.slice(0, 3).map((program, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-red-50 to-blue-50 text-red-700"
+                <BuildingLibraryIcon className="h-8 w-8 text-red-600" />
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500">Программ обучения</p>
+                  <p className="text-2xl font-bold text-gray-900">50+</p>
+                </div>
+                <BookOpenIcon className="h-8 w-8 text-blue-600" />
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500">Преподавателей</p>
+                  <p className="text-2xl font-bold text-gray-900">200+</p>
+                </div>
+                <UserGroupIcon className="h-8 w-8 text-purple-600" />
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500">Выпускников</p>
+                  <p className="text-2xl font-bold text-gray-900">10k+</p>
+                </div>
+                <TrophyIcon className="h-8 w-8 text-green-600" />
+              </div>
+            </div>
+          </div>
+          {/* Search and Filter Section */}
+          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200"
+                  placeholder="Поиск школ..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  return (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                        selectedCategory === category.id
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
+                      }`}
                     >
-                      {program}
-                    </span>
-                  ))}
-                  {school.programs.length > 3 && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700">
-                      +{school.programs.length - 3}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <UserGroupIcon className="h-4 w-4 mr-1 text-red-600" />
-                    <span>{school.staff.length} преподавателей</span>
-                  </div>
-                  {school.founded && (
-                    <div className="flex items-center">
-                      <TrophyIcon className="h-4 w-4 mr-1 text-red-600" />
-                      <span>Основана в {school.founded}</span>
-                    </div>
-                  )}
-                </div>
+                      <Icon className="h-4 w-4 mr-2" />
+                      {category.name}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          ))}
-        </div>
-
+          </div>
+          {/* Schools Grid */}
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredSchools.map((school) => (
+                <motion.div
+                  key={school.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                  onClick={() => {
+                    setSelectedSchool(school);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  <div className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="p-3 rounded-xl bg-blue-50 mr-4">
+                        <school.icon className={`h-6 w-6 ${school.color}`} />
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                        {school.name}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{school.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {school.programs.slice(0, 3).map((program, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700"
+                        >
+                          {program}
+                        </span>
+                      ))}
+                      {school.programs.length > 3 && (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-700">
+                          +{school.programs.length - 3}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center">
+                        <UserGroupIcon className="h-4 w-4 mr-1 text-blue-600" />
+                        <span>{school.staff.length} преподавателей</span>
+                      </div>
+                      {school.founded && (
+                        <div className="flex items-center">
+                          <TrophyIcon className="h-4 w-4 mr-1 text-blue-600" />
+                          <span>Основана в {school.founded}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
         {/* Modal */}
         {isModalOpen && selectedSchool && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-6">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 z-50">
+            <div className="bg-white rounded-2xl sm:rounded-3xl max-w-xs sm:max-w-md md:max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-auto shadow-2xl animate-slide-up">
+              <div className="p-3 sm:p-6">
+                <div className="flex justify-between items-start mb-4 sm:mb-6">
                   <div className="flex items-center">
-                    <div className={`p-4 rounded-xl bg-gradient-to-br from-${selectedSchool.color.split('-')[1]}-500 to-${selectedSchool.color.split('-')[1]}-600 text-white mr-4`}>
-                      <selectedSchool.icon className="h-8 w-8" />
+                    <div className="p-4 rounded-xl bg-blue-50 mr-4">
+                      <selectedSchool.icon className={`h-8 w-8 ${selectedSchool.color}`} />
                     </div>
                     <div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{selectedSchool.name}</h2>
+                      <h2 className="text-lg sm:text-2xl font-bold text-gray-900">{selectedSchool.name}</h2>
                       {selectedSchool.founded && (
-                        <p className="text-sm text-gray-500">Основана в {selectedSchool.founded}</p>
+                        <p className="text-xs sm:text-sm text-gray-500">Основана в {selectedSchool.founded}</p>
                       )}
                     </div>
                   </div>
@@ -559,31 +564,29 @@ const Schools: React.FC = () => {
                     onClick={() => setIsModalOpen(false)}
                     className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                   >
-                    <XMarkIcon className="h-6 w-6 text-gray-500" />
+                    <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500" />
                   </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">О школе</h3>
-                    <p className="text-gray-600 mb-6">{selectedSchool.description}</p>
-
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Программы</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">О школе</h3>
+                    <p className="text-gray-600 mb-6 text-xs sm:text-base">{selectedSchool.description}</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Программы</h3>
                     <div className="space-y-3">
                       {selectedSchool.programDetails ? (
                         selectedSchool.programDetails.map((program, index) => (
                           <div
                             key={index}
-                            className="flex items-center p-4 bg-gradient-to-r from-red-50 to-blue-50 rounded-xl hover:shadow-md transition-all duration-200 cursor-pointer"
+                            className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all duration-200 cursor-pointer"
                             onClick={() => {
                               setSelectedProgram(program);
                               setIsProgramModalOpen(true);
                             }}
                           >
-                            <BookOpenIcon className="h-5 w-5 text-red-600 mr-3" />
+                            <BookOpenIcon className="h-5 w-5 text-blue-600 mr-3" />
                             <div>
                               <span className="text-gray-700 font-medium">{program.name}</span>
-                              <p className="text-sm text-gray-500 mt-1">{program.description}</p>
+                              <p className="text-xs sm:text-sm text-gray-500 mt-1">{program.description}</p>
                             </div>
                           </div>
                         ))
@@ -591,49 +594,47 @@ const Schools: React.FC = () => {
                         selectedSchool.programs.map((program, index) => (
                           <div
                             key={index}
-                            className="flex items-center p-4 bg-gradient-to-r from-red-50 to-blue-50 rounded-xl"
+                            className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl"
                           >
-                            <BookOpenIcon className="h-5 w-5 text-red-600 mr-3" />
-                            <span className="text-gray-700">{program}</span>
+                            <BookOpenIcon className="h-5 w-5 text-blue-600 mr-3" />
+                            <span className="text-gray-700 text-xs sm:text-base">{program}</span>
                           </div>
                         ))
                       )}
                     </div>
                   </div>
-
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Контакты</h3>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Контакты</h3>
                     <div className="space-y-4">
                       {selectedSchool.contacts.email && (
                         <div className="flex items-center p-3 bg-gray-50 rounded-xl">
-                          <EnvelopeIcon className="h-5 w-5 text-red-600 mr-3" />
-                          <a href={`mailto:${selectedSchool.contacts.email}`} className="text-gray-700 hover:text-red-600 transition-colors duration-200">
+                          <EnvelopeIcon className="h-5 w-5 text-blue-600 mr-3" />
+                          <a href={`mailto:${selectedSchool.contacts.email}`} className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-xs sm:text-base">
                             {selectedSchool.contacts.email}
                           </a>
                         </div>
                       )}
                       {selectedSchool.contacts.phone && (
                         <div className="flex items-center p-3 bg-gray-50 rounded-xl">
-                          <PhoneIcon className="h-5 w-5 text-red-600 mr-3" />
-                          <a href={`tel:${selectedSchool.contacts.phone}`} className="text-gray-700 hover:text-red-600 transition-colors duration-200">
+                          <PhoneIcon className="h-5 w-5 text-blue-600 mr-3" />
+                          <a href={`tel:${selectedSchool.contacts.phone}`} className="text-gray-700 hover:text-blue-600 transition-colors duration-200 text-xs sm:text-base">
                             {selectedSchool.contacts.phone}
                           </a>
                         </div>
                       )}
                       {selectedSchool.contacts.office && (
                         <div className="flex items-center p-3 bg-gray-50 rounded-xl">
-                          <MapPinIcon className="h-5 w-5 text-red-600 mr-3" />
-                          <span className="text-gray-700">Кабинет {selectedSchool.contacts.office}</span>
+                          <MapPinIcon className="h-5 w-5 text-blue-600 mr-3" />
+                          <span className="text-gray-700 text-xs sm:text-base">Кабинет {selectedSchool.contacts.office}</span>
                         </div>
                       )}
                     </div>
-
                     {selectedSchool.staff.length > 0 && (
                       <>
-                        <h3 className="text-lg font-semibold text-gray-900 mt-8 mb-4">Преподаватели</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mt-8 mb-3">Преподаватели</h3>
                         <div className="space-y-3">
                           {selectedSchool.staff.map((member, index) => (
-                            <div key={index} className="flex items-center p-4 bg-gradient-to-r from-red-50 to-blue-50 rounded-xl hover:shadow-md transition-all duration-200">
+                            <div key={index} className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all duration-200">
                               {member.image ? (
                                 <img
                                   src={member.image}
@@ -641,18 +642,18 @@ const Schools: React.FC = () => {
                                   className="h-12 w-12 rounded-full mr-3 object-cover"
                                 />
                               ) : (
-                                <UserIcon className="h-12 w-12 text-red-600 mr-3" />
+                                <UserIcon className="h-12 w-12 text-blue-600 mr-3" />
                               )}
                               <div>
-                                <p className="font-medium text-gray-900">{member.name}</p>
-                                <p className="text-sm text-gray-500">{member.role}</p>
+                                <p className="font-medium text-gray-900 text-xs sm:text-base">{member.name}</p>
+                                <p className="text-xs sm:text-sm text-gray-500">{member.role}</p>
                                 {member.specialization && (
-                                  <p className="text-sm text-gray-500 mt-1">{member.specialization}</p>
+                                  <p className="text-xs sm:text-sm text-gray-500 mt-1">{member.specialization}</p>
                                 )}
                                 {member.email && (
                                   <a
                                     href={`mailto:${member.email}`}
-                                    className="text-sm text-red-600 hover:text-red-700 transition-colors duration-200"
+                                    className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 transition-colors duration-200"
                                   >
                                     {member.email}
                                   </a>
@@ -669,16 +670,15 @@ const Schools: React.FC = () => {
             </div>
           </div>
         )}
-
         {/* Program Modal */}
         {isProgramModalOpen && selectedProgram && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-6">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 z-50">
+            <div className="bg-white rounded-2xl sm:rounded-3xl max-w-xs sm:max-w-md md:max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-auto shadow-2xl animate-slide-up">
+              <div className="p-3 sm:p-6">
+                <div className="flex justify-between items-start mb-4 sm:mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{selectedProgram.name}</h2>
-                    <p className="text-gray-500 mt-1">
+                    <h2 className="text-lg sm:text-2xl font-bold text-gray-900">{selectedProgram.name}</h2>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">
                       {selectedProgram.duration} • {selectedProgram.credits} кредитов
                     </p>
                   </div>
@@ -686,29 +686,27 @@ const Schools: React.FC = () => {
                     onClick={() => setIsProgramModalOpen(false)}
                     className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
                   >
-                    <XMarkIcon className="h-6 w-6 text-gray-500" />
+                    <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500" />
                   </button>
                 </div>
-
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Описание программы</h3>
-                  <p className="text-gray-600">{selectedProgram.description}</p>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Описание программы</h3>
+                  <p className="text-gray-600 text-xs sm:text-base">{selectedProgram.description}</p>
                 </div>
-
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Курсы</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Курсы</h3>
                   <div className="space-y-4">
                     {selectedProgram.courses.map((course, index) => (
                       <div
                         key={index}
-                        className="p-4 bg-gradient-to-r from-red-50 to-blue-50 rounded-xl hover:shadow-md transition-all duration-200"
+                        className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all duration-200"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-medium text-gray-900">{course.name}</h4>
-                          <span className="text-sm text-gray-500">{course.credits} кредитов</span>
+                          <h4 className="font-medium text-gray-900 text-xs sm:text-base">{course.name}</h4>
+                          <span className="text-xs sm:text-sm text-gray-500">{course.credits} кредитов</span>
                         </div>
-                        <p className="text-gray-600 text-sm mb-2">{course.description}</p>
-                        <div className="flex items-center text-sm text-gray-500">
+                        <p className="text-gray-600 text-xs sm:text-sm mb-2">{course.description}</p>
+                        <div className="flex items-center text-xs sm:text-sm text-gray-500">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100">
                             Семестр {course.semester}
                           </span>

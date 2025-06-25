@@ -13,6 +13,7 @@ import {
   PhoneIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline';
+import { motion } from 'framer-motion';
 
 interface Club {
   id: string;
@@ -305,249 +306,252 @@ const Clubs: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
-          <div className="animate-fade-in">
-            <h1 className="text-3xl font-bold text-gray-900">Студенческие клубы</h1>
-            <p className="mt-2 text-gray-600">Откройте для себя новые возможности и присоединяйтесь к нашим клубам</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="bg-white shadow-2xl rounded-3xl overflow-hidden border">
+          {/* Hero Section */}
+          <div className="text-center p-6 sm:p-8 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Студенческие клубы</h1>
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">Откройте для себя новые возможности и присоединяйтесь к нашим клубам</p>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 animate-slide-in-right">
-            <div className="relative flex-1 sm:flex-none">
-              <input
-                type="text"
-                placeholder="Поиск клубов..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:w-64 pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all duration-300 hover:shadow-md"
-              />
-              <MagnifyingGlassIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-xl bg-white shadow-sm hover:bg-gray-50 transition-all duration-300 hover:shadow-md"
-            >
-              <FunnelIcon className="h-5 w-5 text-gray-400 mr-2" />
-              <span className="text-gray-700">Фильтры</span>
-              {selectedTags.length > 0 && (
-                <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-sm animate-bounce-in">
-                  {selectedTags.length}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {showFilters && (
-          <div className="mb-8 bg-white rounded-2xl shadow-sm p-6 animate-slide-down">
+          {/* Search and Filter Section */}
+          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Категории</h3>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category, index) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={`flex items-center px-4 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 ${
-                        selectedCategory === category.id
-                          ? 'bg-blue-500 text-white shadow-md'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      <category.icon className="h-5 w-5 mr-2" />
-                      {category.name}
-                    </button>
-                  ))}
-                </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Поиск клубов..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="block w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                />
+                <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Популярные теги</h3>
-                <div className="flex flex-wrap gap-2">
-                  {popularTags.map((tag, index) => (
-                    <button
-                      key={tag}
-                      onClick={() => toggleTag(tag)}
-                      className={`px-4 py-2 rounded-xl transition-all duration-300 transform hover:scale-105 ${
-                        selectedTags.includes(tag)
-                          ? 'bg-blue-500 text-white shadow-md'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                      style={{ animationDelay: `${index * 50}ms` }}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-            {selectedTags.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-in">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Выбранные теги</h3>
-                  <button
-                    onClick={() => setSelectedTags([])}
-                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-300"
-                  >
-                    Очистить все
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {selectedTags.map((tag, index) => (
-                    <div
-                      key={tag}
-                      className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded-full animate-bounce-in"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <span>{tag}</span>
-                      <button
-                        onClick={() => toggleTag(tag)}
-                        className="ml-2 text-blue-500 hover:text-blue-700 transition-colors duration-300"
-                      >
-                        <XMarkIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredClubs.map((club, index) => (
-            <div
-              key={club.id}
-              className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
-              onClick={() => setSelectedClub(club)}
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900">{club.name}</h2>
-                  <div className="flex items-center bg-yellow-50 px-3 py-1 rounded-full transition-all duration-300 hover:bg-yellow-100">
-                    <StarIcon className="h-5 w-5 text-yellow-400" />
-                    <span className="ml-1 text-sm font-medium text-yellow-800">{club.rating}</span>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-4 line-clamp-3">{club.description}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {club.tags.map((tag, tagIndex) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs transition-all duration-300 hover:bg-gray-200"
-                      style={{ animationDelay: `${tagIndex * 50}ms` }}
-                    >
-                      {tag}
+              <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center px-6 py-3 rounded-xl border border-blue-200 bg-white text-blue-700 hover:bg-blue-50 shadow transition-all duration-200 font-medium"
+                >
+                  <FunnelIcon className="h-5 w-5 mr-2" />
+                  Фильтры
+                  {selectedTags.length > 0 && (
+                    <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-sm">
+                      {selectedTags.length}
                     </span>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center bg-blue-50 px-3 py-1 rounded-full transition-all duration-300 hover:bg-blue-100">
-                    <UserGroupIcon className="h-5 w-5 text-blue-500" />
-                    <span className="ml-1 text-blue-700 font-medium">{club.members} участников</span>
-                  </div>
-                  <span className="capitalize px-3 py-1 bg-gray-100 rounded-full text-gray-700 transition-all duration-300 hover:bg-gray-200">
-                    {categories.find(c => c.id === club.category)?.name}
-                  </span>
-                </div>
+                  )}
+                </button>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {selectedClub && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-            <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{selectedClub.name}</h2>
-                    <div className="flex items-center mt-2">
+          {showFilters && (
+            <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Категории</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category, index) => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`flex items-center px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                          selectedCategory === category.id
+                            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
+                        }`}
+                      >
+                        <category.icon className="h-5 w-5 mr-2" />
+                        {category.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Популярные теги</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {popularTags.map((tag, index) => (
+                      <button
+                        key={tag}
+                        onClick={() => toggleTag(tag)}
+                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                          selectedTags.includes(tag)
+                            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 shadow-sm'
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              {selectedTags.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Выбранные теги</h3>
+                    <button
+                      onClick={() => setSelectedTags([])}
+                      className="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-300"
+                    >
+                      Очистить все
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedTags.map((tag, index) => (
+                      <div
+                        key={tag}
+                        className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+                      >
+                        <span>{tag}</span>
+                        <button
+                          onClick={() => toggleTag(tag)}
+                          className="ml-2 text-blue-500 hover:text-blue-700 transition-colors duration-300"
+                        >
+                          <XMarkIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredClubs.map((club) => (
+                <motion.div
+                  key={club.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
+                  onClick={() => setSelectedClub(club)}
+                >
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold text-gray-900">{club.name}</h2>
                       <div className="flex items-center bg-yellow-50 px-3 py-1 rounded-full">
                         <StarIcon className="h-5 w-5 text-yellow-400" />
-                        <span className="ml-1 text-sm font-medium text-yellow-800">{selectedClub.rating}</span>
-                      </div>
-                      <div className="flex items-center bg-blue-50 px-3 py-1 rounded-full ml-3">
-                        <UserGroupIcon className="h-5 w-5 text-blue-500" />
-                        <span className="ml-1 text-sm font-medium text-blue-700">{selectedClub.members} участников</span>
+                        <span className="ml-1 text-sm font-medium text-yellow-800">{club.rating}</span>
                       </div>
                     </div>
+                    <p className="text-gray-600 mb-4 line-clamp-3">{club.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {club.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center bg-blue-50 px-3 py-1 rounded-full">
+                        <UserGroupIcon className="h-5 w-5 text-blue-500" />
+                        <span className="ml-1 text-blue-700 font-medium">{club.members} участников</span>
+                      </div>
+                      <span className="capitalize px-3 py-1 bg-gray-100 rounded-full text-gray-700">
+                        {categories.find(c => c.id === club.category)?.name}
+                      </span>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => setSelectedClub(null)}
-                    className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  >
-                    <XMarkIcon className="h-6 w-6 text-gray-500" />
-                  </button>
-                </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
 
-                <div className="space-y-6">
-                  <div className="bg-gray-50 rounded-2xl p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">О клубе</h3>
-                    <p className="text-gray-600 leading-relaxed">{selectedClub.description}</p>
+          {selectedClub && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4 z-50">
+              <div className="bg-white rounded-2xl sm:rounded-3xl max-w-xs sm:max-w-md md:max-w-2xl w-full max-h-[90vh] overflow-y-auto mx-auto shadow-2xl animate-slide-up">
+                <div className="p-3 sm:p-6">
+                  <div className="flex justify-between items-start mb-4 sm:mb-6">
+                    <div>
+                      <h2 className="text-lg sm:text-2xl font-bold text-gray-900">{selectedClub.name}</h2>
+                      <div className="flex items-center mt-2">
+                        <div className="flex items-center bg-yellow-50 px-3 py-1 rounded-full">
+                          <StarIcon className="h-5 w-5 text-yellow-400" />
+                          <span className="ml-1 text-sm font-medium text-yellow-800">{selectedClub.rating}</span>
+                        </div>
+                        <div className="flex items-center bg-blue-50 px-3 py-1 rounded-full ml-3">
+                          <UserGroupIcon className="h-5 w-5 text-blue-500" />
+                          <span className="ml-1 text-sm font-medium text-blue-700">{selectedClub.members} участников</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSelectedClub(null)}
+                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500" />
+                    </button>
                   </div>
-
-                  <div className="bg-gray-50 rounded-2xl p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Ближайшие мероприятия</h3>
-                    <div className="space-y-3">
-                      {selectedClub.events.map((event, index) => (
-                        <div key={index} className="flex items-start space-x-3 bg-white p-3 rounded-xl">
-                          <CalendarIcon className="h-5 w-5 text-blue-500 mt-0.5" />
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{event.title}</p>
-                            <div className="flex items-center text-sm text-gray-500 mt-1">
-                              <span>{event.date}</span>
-                              <span className="mx-2">•</span>
-                              <MapPinIcon className="h-4 w-4 mr-1" />
-                              <span>{event.location}</span>
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="bg-gray-50 rounded-2xl p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">О клубе</h3>
+                      <p className="text-gray-600 leading-relaxed text-xs sm:text-base">{selectedClub.description}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-2xl p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Ближайшие мероприятия</h3>
+                      <div className="space-y-3">
+                        {selectedClub.events.map((event, index) => (
+                          <div key={index} className="flex items-start space-x-3 bg-white p-3 rounded-xl">
+                            <CalendarIcon className="h-5 w-5 text-blue-500 mt-0.5" />
+                            <div>
+                              <p className="text-xs sm:text-sm font-medium text-gray-900">{event.title}</p>
+                              <div className="flex items-center text-xs sm:text-sm text-gray-500 mt-1">
+                                <span>{event.date}</span>
+                                <span className="mx-2">•</span>
+                                <MapPinIcon className="h-4 w-4 mr-1" />
+                                <span>{event.location}</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-2xl p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Достижения</h3>
-                    <ul className="space-y-2">
-                      {selectedClub.achievements.map((achievement, index) => (
-                        <li key={index} className="flex items-start bg-white p-3 rounded-xl">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-                          <span className="text-gray-600">{achievement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-2xl p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Контакты</h3>
-                    <div className="space-y-2">
-                      {selectedClub.contacts.email && (
-                        <div className="flex items-center bg-white p-3 rounded-xl">
-                          <EnvelopeIcon className="h-5 w-5 text-blue-500 mr-2" />
-                          <span className="text-gray-600">{selectedClub.contacts.email}</span>
-                        </div>
-                      )}
-                      {selectedClub.contacts.phone && (
-                        <div className="flex items-center bg-white p-3 rounded-xl">
-                          <PhoneIcon className="h-5 w-5 text-blue-500 mr-2" />
-                          <span className="text-gray-600">{selectedClub.contacts.phone}</span>
-                        </div>
-                      )}
-                      {selectedClub.contacts.social && (
-                        <div className="flex items-center bg-white p-3 rounded-xl">
-                          <GlobeAltIcon className="h-5 w-5 text-blue-500 mr-2" />
-                          <span className="text-gray-600">{selectedClub.contacts.social}</span>
-                        </div>
-                      )}
+                    <div className="bg-gray-50 rounded-2xl p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Достижения</h3>
+                      <ul className="space-y-2">
+                        {selectedClub.achievements.map((achievement, index) => (
+                          <li key={index} className="flex items-start bg-white p-3 rounded-xl">
+                            <CheckCircleIcon className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
+                            <span className="text-gray-600 text-xs sm:text-base">{achievement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="bg-gray-50 rounded-2xl p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">Контакты</h3>
+                      <div className="space-y-2">
+                        {selectedClub.contacts.email && (
+                          <div className="flex items-center bg-white p-3 rounded-xl">
+                            <EnvelopeIcon className="h-5 w-5 text-blue-500 mr-2" />
+                            <span className="text-gray-600 text-xs sm:text-base">{selectedClub.contacts.email}</span>
+                          </div>
+                        )}
+                        {selectedClub.contacts.phone && (
+                          <div className="flex items-center bg-white p-3 rounded-xl">
+                            <PhoneIcon className="h-5 w-5 text-blue-500 mr-2" />
+                            <span className="text-gray-600 text-xs sm:text-base">{selectedClub.contacts.phone}</span>
+                          </div>
+                        )}
+                        {selectedClub.contacts.social && (
+                          <div className="flex items-center bg-white p-3 rounded-xl">
+                            <GlobeAltIcon className="h-5 w-5 text-blue-500 mr-2" />
+                            <span className="text-gray-600 text-xs sm:text-base">{selectedClub.contacts.social}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </motion.div>
       </div>
     </div>
   );
