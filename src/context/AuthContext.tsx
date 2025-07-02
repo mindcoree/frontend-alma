@@ -1,11 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db } from '../lib/db';
 
 interface User {
   id: string;
   email: string;
   name: string;
   role: 'student' | 'teacher' | 'admin';
+}
+
+// Для хранения пароля во внутренней логике
+interface UserWithPassword extends User {
+  password: string;
 }
 
 interface AuthContextType {
@@ -19,6 +23,44 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// --- Вспомогательные функции для работы с localStorage ---
+const USERS_KEY = 'users';
+
+function getUsersFromStorage(): UserWithPassword[] {
+  const users = localStorage.getItem(USERS_KEY);
+  if (!users) return [];
+  try {
+    return JSON.parse(users);
+  } catch {
+    localStorage.removeItem(USERS_KEY);
+    return [];
+  }
+}
+
+function saveUsersToStorage(users: UserWithPassword[]) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+function findUserByEmail(email: string): UserWithPassword | undefined {
+  const users = getUsersFromStorage();
+  return users.find(u => u.email === email);
+}
+
+function createUser({ email, password, name, role }: { email: string; password: string; name: string; role: 'student' | 'teacher' | 'admin' }): UserWithPassword {
+  const users = getUsersFromStorage();
+  const newUser: UserWithPassword = {
+    id: Date.now().toString(),
+    email,
+    password,
+    name,
+    role,
+  };
+  users.push(newUser);
+  saveUsersToStorage(users);
+  return newUser;
+}
+// --------------------------------------------------------
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -43,16 +85,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     setLoading(true);
     try {
-      const user = await db.getUserByEmail(email);
-      
+      const user = findUserByEmail(email);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error('Пользователь не найден');
       }
-
       if (user.password !== password) {
-        throw new Error('Invalid password');
+        throw new Error('Неверный пароль');
       }
-
       const { password: _, ...userWithoutPassword } = user;
       setUser(userWithoutPassword);
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
@@ -61,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('An unexpected error occurred');
+        setError('Произошла непредвиденная ошибка');
       }
       throw error;
     } finally {
@@ -74,19 +113,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       // Проверяем, существует ли пользователь с таким email
-      const existingUser = await db.getUserByEmail(email);
+      const existingUser = findUserByEmail(email);
       if (existingUser) {
-        throw new Error('User with this email already exists');
+        throw new Error('Пользователь с таким email уже существует');
       }
-
       // Создаем нового пользователя
-      const newUser = await db.createUser({
+      const newUser = createUser({
         email,
         password,
         name,
-        role: 'student'
+        role: 'student',
       });
-
       const { password: _, ...userWithoutPassword } = newUser;
       setUser(userWithoutPassword);
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
@@ -95,7 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('An unexpected error occurred');
+        setError('Произошла непредвиденная ошибка');
       }
       throw error;
     } finally {
@@ -114,7 +151,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('An unexpected error occurred');
+        setError('Произошла непредвиденная ошибка');
       }
       throw error;
     } finally {

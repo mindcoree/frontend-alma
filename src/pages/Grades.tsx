@@ -22,7 +22,8 @@ import {
   ClipboardDocumentListIcon,
   LightBulbIcon,
   MinusIcon,
-  CalendarIcon
+  CalendarIcon,
+  UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -400,6 +401,18 @@ const Grades: React.FC = () => {
     }
   };
 
+  const filteredGrades = gradesInSemester
+    .filter(grade => 
+      grade.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (!filterDepartment || grade.code.startsWith(filterDepartment))
+    );
+
+  React.useEffect(() => {
+    if (expandedCourse && !filteredGrades.some(g => g.id === expandedCourse)) {
+      setExpandedCourse(null);
+    }
+  }, [searchQuery, filterDepartment, selectedYear, selectedSemester]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -435,13 +448,6 @@ const Grades: React.FC = () => {
                     <div className="text-sm text-green-600 font-medium">Average Grade</div>
                     <div className="text-2xl font-bold text-green-700">{averageGrade.toFixed(1)}</div>
                   </div>
-                  <button
-                    onClick={() => exportToCSV(gradesInSemester, `${selectedYear}-${selectedSemester}`)}
-                    className="flex items-center space-x-2 bg-white/80 hover:bg-blue-50 px-4 py-2 rounded-xl shadow transition-colors border border-blue-100"
-                  >
-                    <ArrowDownTrayIcon className="w-5 h-5 text-blue-600" />
-                    <span className="text-blue-700 font-medium">Export</span>
-                  </button>
                   <button
                     onClick={() => setShowNotifications(!showNotifications)}
                     className="relative bg-white/80 hover:bg-blue-50 p-2 rounded-xl shadow border border-blue-100 transition-colors"
@@ -542,160 +548,61 @@ const Grades: React.FC = () => {
           {/* Grades Grid */}
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {gradesInSemester
-                .filter(grade => 
-                  grade.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-                  (!filterDepartment || grade.code.startsWith(filterDepartment))
-                )
-                .map((grade) => {
-                  const rating = calculateRating(grade);
-                  const finalGrade = calculateFinalGrade(grade);
-                  const canTakeExam = rating >= 50;
+              {filteredGrades.map((grade) => {
+                const rating = calculateRating(grade);
+                const finalGrade = calculateFinalGrade(grade);
+                const canTakeExam = rating >= 50;
 
-                  return (
-                    <motion.div
-                      key={grade.id}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-                      onClick={() => setExpandedCourse(expandedCourse === grade.id ? null : grade.id)}
-                    >
-                      <div className="p-6">
-                        <div className="flex justify-between items-start mb-6">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">{grade.name}</h3>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                                {grade.code}
-                              </span>
-                              <span className="text-sm text-gray-500">
-                                {grade.credits} Credits
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className={`text-sm font-medium px-2 py-1 rounded-full ${
-                              canTakeExam 
-                                ? 'bg-green-50 text-green-600' 
-                                : 'bg-red-50 text-red-600'
-                            }`}>
-                              {canTakeExam ? 'Eligible' : 'Not Eligible'}
-                            </span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setExpandedCourse(expandedCourse === grade.id ? null : grade.id);
-                              }}
-                              className="text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                              {expandedCourse === grade.id ? (
-                                <ChevronUpIcon className="w-5 h-5" />
-                              ) : (
-                                <ChevronDownIcon className="w-5 h-5" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-6 mb-6">
-                          <div className="flex flex-col items-center">
-                            <CircularProgress
-                              value={grade.midterm1}
-                              color={getGradeColor(grade.midterm1)}
-                              size={80}
-                            />
-                            <span className="text-sm font-medium text-gray-700 mt-2">First Midterm</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <CircularProgress
-                              value={grade.midterm2}
-                              color={getGradeColor(grade.midterm2)}
-                              size={80}
-                            />
-                            <span className="text-sm font-medium text-gray-700 mt-2">Second Midterm</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <CircularProgress
-                              value={grade.currentPerformance}
-                              color={getGradeColor(grade.currentPerformance)}
-                              size={80}
-                            />
-                            <span className="text-sm font-medium text-gray-700 mt-2">Current Performance</span>
-                          </div>
-                          <div className="flex flex-col items-center">
-                            <CircularProgress
-                              value={rating}
-                              color={getGradeColor(rating)}
-                              size={80}
-                            />
-                            <span className="text-sm font-medium text-gray-700 mt-2">Overall Rating</span>
-                          </div>
-                        </div>
-
-                        <AnimatePresence>
-                          {expandedCourse === grade.id && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="overflow-hidden"
-                            >
-                              <div className="pt-4 border-t border-gray-200">
-                                <div className="space-y-4">
-                                  <div className="flex justify-between items-center">
-                                    <div>
-                                      <p className="text-sm font-medium text-gray-600">Instructor</p>
-                                      <p className="font-medium text-gray-900">{grade.instructor}</p>
-                                    </div>
-                                    <div>
-                                      <p className="text-sm font-medium text-gray-600">Credits</p>
-                                      <p className="font-medium text-gray-900">{grade.credits}</p>
-                                    </div>
-                                  </div>
-                                  <div className="bg-gray-50 rounded-lg p-4">
-                                    <p className="text-sm font-medium text-gray-600 mb-2">Exam Status</p>
-                                    <div className="flex items-center space-x-2">
-                                      {canTakeExam ? (
-                                        <>
-                                          <CheckCircleIcon className="w-5 h-5 text-green-500" />
-                                          <span className="text-green-600 font-medium">Eligible for Exam</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <ExclamationCircleIcon className="w-5 h-5 text-red-500" />
-                                          <span className="text-red-600 font-medium">Not Eligible for Exam</span>
-                                        </>
-                                      )}
-                                    </div>
-                                    {!canTakeExam && (
-                                      <p className="text-sm text-red-600 mt-2">
-                                        Rating {rating.toFixed(1)}% is below the required 50% threshold
-                                      </p>
-                                    )}
-                                  </div>
-                                  {canTakeExam && (
-                                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
-                                      <p className="text-sm font-medium text-gray-600 mb-2">Final Grade</p>
-                                      <div className="flex items-center justify-center">
-                                        <CircularProgress
-                                          value={finalGrade}
-                                          color={getGradeColor(finalGrade)}
-                                          size={100}
-                                        />
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                return (
+                  <motion.div
+                    key={grade.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="bg-white border border-gray-200 shadow-md mb-4 w-full flex flex-col items-center min-h-[320px] py-6 px-4 rounded-2xl overflow-hidden"
+                  >
+                    {/* Название предмета выше прогресс-бара */}
+                    <div className="text-lg md:text-xl font-bold text-gray-900 mb-1 text-center">{grade.name}</div>
+                    {/* Круглый прогресс-бар с процентом */}
+                    <div className="flex flex-col items-center w-full">
+                      <div className="relative flex flex-col items-center justify-center mb-4">
+                        <CircularProgress value={grade.currentPerformance} color={getGradeColor(grade.currentPerformance)} size={90} />
+                        {/* <span className="absolute text-2xl font-bold text-gray-900 select-none">{grade.currentPerformance}%</span> */}
+                        <span className="text-xs text-gray-500 mt-2">Performance</span>
                       </div>
-                    </motion.div>
-                  );
-                })}
+                      {/* Таблица оценок */}
+                      <div className="w-full flex justify-center mb-2">
+                        <table className="text-sm text-center">
+                          <thead>
+                            <tr className="text-gray-500 font-medium">
+                              <th className="py-1 px-2">Midterm 1</th>
+                              <th className="py-1 px-2">Midterm 2</th>
+                              <th className="py-1 px-2">Exam</th>
+                              <th className="py-1 px-2">Final</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="text-lg font-semibold text-gray-900">
+                              <td className="py-1 px-2">{grade.midterm1}</td>
+                              <td className="py-1 px-2">{grade.midterm2}</td>
+                              <td className="py-1 px-2">{canTakeExam ? grade.exam : '-'}</td>
+                              <td className="py-1 px-2">{canTakeExam ? finalGrade : '-'}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    {/* Статус, кредиты, код, преподаватель */}
+                    <div className="flex flex-col items-center w-full mt-2">
+                      <div className={`text-sm font-semibold ${canTakeExam ? 'text-green-600' : 'text-red-600'} mb-1`}>{canTakeExam ? 'Допущен к экзамену' : 'Не допущен к экзамену'}</div>
+                      <div className="text-xs text-gray-500 mb-2">Кредиты: <span className="font-bold text-gray-700">{grade.credits}</span></div>
+                      <div className="text-xs text-gray-500 mb-1 text-center">{grade.code}</div>
+                      <div className="text-sm text-gray-700 text-center">{grade.instructor}</div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </motion.div>
