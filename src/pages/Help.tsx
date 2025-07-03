@@ -246,6 +246,8 @@ const Help: React.FC = () => {
     subject: '',
     message: '',
   });
+  // Состояние для пользовательских заявок
+  const [userRequests, setUserRequests] = useState<Request[]>([]);
 
   // Фильтрация эдвайзеров
   const filteredAdvisors = advisors.filter((advisor) => {
@@ -269,7 +271,21 @@ const Help: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', { ...formData, advisorId: selectedAdvisor });
+    // Формируем новую заявку
+    const advisorObj = advisors.find(a => a.id === selectedAdvisor);
+    const newRequest: Request = {
+      id: 'user-' + Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      subject: formData.subject,
+      status: 'pending',
+      advisor: advisorObj ? advisorObj.name : '—',
+      priority: 'medium',
+      description: formData.message,
+      lastUpdated: new Date().toISOString().slice(0, 10),
+    };
+    setUserRequests(prev => [newRequest, ...prev]);
+    setSelectedAdvisor(null);
+    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
   };
 
   const handleChatSubmit = (e: React.FormEvent) => {
@@ -780,7 +796,11 @@ const Help: React.FC = () => {
               )}
             </div>
             <div className="space-y-4">
-              {(showHistory ? requests : requests.slice(0, 3)).map((request) => (
+              {/* Сначала пользовательские заявки, потом остальные */}
+              {(showHistory
+                ? [...userRequests, ...requests]
+                : [...userRequests, ...requests].slice(0, 3)
+              ).map((request) => (
                 <div
                   key={request.id}
                   className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-slate-50 to-white group cursor-pointer"
@@ -830,9 +850,9 @@ const Help: React.FC = () => {
                     </div>
                     
                     {/* Основная информация */}
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <div className="flex items-center space-x-4">
-                        <span className="flex items-center">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mb-2 sm:mb-0">
+                        <span className="flex items-center mb-1 sm:mb-0">
                           <UserIcon className="h-4 w-4 mr-2 text-blue-500" />
                           {request.advisor}
                         </span>
@@ -841,7 +861,7 @@ const Help: React.FC = () => {
                           {new Date(request.date).toLocaleDateString('ru-RU')}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 mt-1 sm:mt-0">
                         Обновлено: {new Date(request.lastUpdated).toLocaleDateString('ru-RU')}
                       </span>
                     </div>
@@ -927,17 +947,19 @@ const Help: React.FC = () => {
 
           {/* Модальное окно для записи на консультацию */}
           {selectedAdvisor && (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl">
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">Запись на консультацию</h2>
-                    <button
-                      onClick={() => setSelectedAdvisor(null)}
-                      className="text-gray-400 hover:text-gray-500 transition-colors"
-                    >
-                      <XMarkIcon className="h-6 w-6" />
-                    </button>
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 z-50">
+              <div className="bg-white rounded-2xl w-full max-w-md sm:max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto relative">
+                {/* Кнопка закрытия фиксирована в правом верхнем углу */}
+                <button
+                  onClick={() => setSelectedAdvisor(null)}
+                  className="absolute top-3 right-3 z-10 text-gray-400 hover:text-gray-500 transition-colors bg-white rounded-full p-1 shadow"
+                  style={{ lineHeight: 0 }}
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+                <div className="p-4 sm:p-6 md:p-8">
+                  <div className="mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 text-center">Запись на консультацию</h2>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
